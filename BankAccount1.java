@@ -6,14 +6,27 @@ Write your code in this editor and press "Run" button to execute it.
 
 *******************************************************************************/
 import java.util.*;
+//THIS CLASS IS USED TO CHECK WHETHER THE ACCOUNT NAME TAKEN OR NOT
+//AND TO CHECK PASSWORDS
+class CheckDetails{
+    ArrayList<String> WrgAccount;
+    ArrayList<String> ATaken;
+    public CheckDetails(){
+        this.WrgAccount=new ArrayList<String>();
+        this.ATaken=new ArrayList<String>();
+    }
+} 
+
+
 public class BankAccount1
 {
     private String AccHolderName;
     private String AccNumber;
     private double balance;
     private String password;
-    
-    public static boolean checkIf(String pass,int index,BankAccount1 []obj){
+
+    //'checkIf' METHOD USED TO CHECK WHETHER PASSWORD MATCHES OR NOT
+    public boolean checkIf(String pass,int index,BankAccount1 []obj){
 
         if(obj[index].password.equals(pass))
             return true;
@@ -21,18 +34,21 @@ public class BankAccount1
             return false;
     }
     
-    
-    public BankAccount1(String Name,String ANumber,double bal,String pass){
+    //CONSTRUCTOR USED TO INITIALIZE CLASS VARIABLES
+    public BankAccount1( CheckDetails CDetails,String Name,String ANumber,double bal,String pass){
         this.AccHolderName=Name;
         this.AccNumber=ANumber;
         this.balance=bal;
         this.password=pass;
+        CDetails.ATaken.add(ANumber);
         System.out.println("Details saved succesfully");
     }
     
-    
-    public int withdraw(ArrayList<String> array_lst,int index,BankAccount1 obj[]){
-        if(!array_lst.contains(AccNumber)){
+    //USED TO WITHDRAW THE AMOUNT
+    public int withdraw(CheckDetails CDetails,int index,BankAccount1 obj[]){
+        //THIS if BLOCK CHECKS IF THE PRESENT ENTERED ACCOUNT 
+        //IS EQUAL TO WRONG PASSWORD ENETERD ACCOUNT
+        if(!CDetails.WrgAccount.contains(AccNumber)){
         int k;
         for(k=0;k<3;k++){
             System.out.print("Enter password to access the "+AccNumber+":");
@@ -51,18 +67,20 @@ public class BankAccount1
                 }
                 return 1;
             }
-            else if(!checkIf(pass,index,obj)&&k!=2){   
+            else if(checkIf(pass,index,obj)&&k!=2){   
                 System.out.println("WRONG PASSWORD");
                 System.out.println("YOU HAVE "+(3-k-1)+" MORE ATTEMPTS");
             }
         }
     }
-        array_lst.add(AccNumber);
+        //IF WRONG PASSWORD IS ENETERED MORE THAN 3 TIMES IT ADDS INTO
+        //THE 'WrgAccount' ARRAY LIST
+        CDetails.WrgAccount.add(AccNumber);
         System.out.println("TOO MANY ATTEMPTS\nEXITING FROM ACCOUNT:"+AccNumber);
         return 0;
 }
-    public int deposit(ArrayList<String> array_lst,int index,BankAccount1 obj[]){
-        if(!array_lst.contains(AccNumber)){
+    public int deposit(CheckDetails CDetails,int index,BankAccount1 obj[]){
+        if(!CDetails.WrgAccount.contains(AccNumber)){
             int k;
             for(k=0;k<3;k++){
                 System.out.print("Enter password to access the "+AccNumber+":");
@@ -86,14 +104,14 @@ public class BankAccount1
                 }
             }
         }
-        array_lst.add(AccNumber);
+        CDetails.WrgAccount.add(AccNumber);
         System.out.println("TOO MANY ATTEMPTS\nEXITING FROM ACCOUNT:"+AccNumber);
         return 0;
 }
     
     
-    public int checkbalance(ArrayList<String> array_lst,int index,BankAccount1 obj[]){
-        if(!array_lst.contains(AccNumber)){
+    public int checkbalance(CheckDetails CDetails,int index,BankAccount1 obj[]){
+        if(!CDetails.WrgAccount.contains(AccNumber)){
             int k;
             for(k=0;k<3;k++){
                 System.out.print("Enter password to access the "+AccNumber+":");
@@ -110,14 +128,15 @@ public class BankAccount1
                 }
             }
         }
-        array_lst.add(AccNumber);
+        CDetails.WrgAccount.add(AccNumber);
         System.out.println("TOO MANY ATTEMPTS\nEXITING FROM ACCOUNT:"+AccNumber);
         return 0;
 }
     
     
 	public static void main(String[] args) {
-        ArrayList<String> array_lst = new ArrayList<String>();
+       //ArrayList<String> array_lst = new ArrayList<String>();
+        CheckDetails CDetails=new CheckDetails();
 	    Scanner inp=new Scanner(System.in);
 	    System.out.print("Enter how many account details you are going to add:");
 	    int size=inp.nextInt();
@@ -129,11 +148,15 @@ public class BankAccount1
             String Name=inp.nextLine();
             System.out.print("Account Number:");
             String ANumber=inp.nextLine();
+            while(i !=0  &&  CDetails.ATaken.contains(ANumber)){
+                System.out.print("THIS ACCOUNT NUMBER IS ALREADY TAKEN\nPLEASE ENTER THE NEW ONE:");
+                ANumber=inp.nextLine();
+            }
             System.out.print("Password:");
             String pass=inp.nextLine();
             System.out.print("Amount being deposited at first :");
             double bal=inp.nextFloat();
-            obj[i]=new BankAccount1(Name,ANumber,bal,pass);
+            obj[i]=new BankAccount1(CDetails,Name,ANumber,bal,pass);
 		}
         //BankAccount obj=new BankAccount(Name,ANumber,bal,pass);
         while(true){
@@ -156,17 +179,17 @@ public class BankAccount1
                         break;
                     }
             		if(n==1){
-            		        int bb=obj[i].deposit(array_lst,i,obj);
+            		        int bb=obj[i].deposit(CDetails,i,obj);
                     	    if (bb==0)
                     	        break;
                             }
                     else if(n==2){
-                    	    int aa=obj[i].withdraw(array_lst,i,obj);
+                    	    int aa=obj[i].withdraw(CDetails,i,obj);
                     	    if (aa==0)
                     	        break;
                         }
                     else if(n==3){
-                    	    int cc=obj[i].checkbalance(array_lst,i,obj);
+                    	    int cc=obj[i].checkbalance(CDetails,i,obj);
                     	    if (cc==0)
                     	        break;
                         }

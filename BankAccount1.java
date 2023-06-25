@@ -6,6 +6,34 @@ Write your code in this editor and press "Run" button to execute it.
 
 *******************************************************************************/
 import java.util.*;
+//EXCEPTION CLASS FOR ACCOUNT ALREADY EXISTS 
+class AlreadyAccountExistsException extends Exception{
+    AlreadyAccountExistsException(String msg){
+        super(msg);
+    }
+}
+
+//EXCEPTION CLASS FOR ACCOUND NOT FOUND
+class AccountNotFoundException extends Exception{
+    AccountNotFoundException (String msg){
+        super(msg);
+    }
+}
+
+//EXCEPTION CLASS TO CHECK WHETHER THE ENTERED CHOICE IS VALID OR NOT 
+class ChoiceNotCorrectException extends Exception{
+    ChoiceNotCorrectException(String msg){
+        super(msg);
+    }
+}
+
+//PASSWORD NOT MATCH EXCEPTION
+class PasswordNotMatchException extends Exception{
+    PasswordNotMatchException(String msg){
+        super(msg);
+    }
+}
+
 //THIS CLASS IS USED TO CHECK WHETHER THE ACCOUNT NAME TAKEN OR NOT
 //AND TO CHECK PASSWORDS
 class CheckDetails{
@@ -45,7 +73,7 @@ public class BankAccount1
     }
     
     //USED TO WITHDRAW THE AMOUNT
-    public int withdraw(CheckDetails CDetails,int index,BankAccount1 obj[]){
+    public int withdraw(CheckDetails CDetails,int index,BankAccount1 obj[]) throws PasswordNotMatchException{
         //THIS if BLOCK CHECKS IF THE PRESENT ENTERED ACCOUNT 
         //IS EQUAL TO WRONG PASSWORD ENETERD ACCOUNT
         if(!CDetails.WrgAccount.contains(AccNumber)){
@@ -67,10 +95,16 @@ public class BankAccount1
                 }
                 return 1;
             }
-            else if(checkIf(pass,index,obj)&&k!=2){   
-                System.out.println("WRONG PASSWORD");
-                System.out.println("YOU HAVE "+(3-k-1)+" MORE ATTEMPTS");
+            else if(!checkIf(pass,index,obj)&&k!=2){  
+                //THROWS WHEN PASSWORD DOESN'T MATCHES
+                try{ 
+                throw new PasswordNotMatchException("WRONG PASSWORD\nYOU HAVE "+(3-k-1)+" MORE ATTEMPTS");
+                
+            }catch(PasswordNotMatchException d){
+                System.out.println(d.getMessage());
             }
+
+        }
         }
     }
         //IF WRONG PASSWORD IS ENETERED MORE THAN 3 TIMES IT ADDS INTO
@@ -79,7 +113,9 @@ public class BankAccount1
         System.out.println("TOO MANY ATTEMPTS\nEXITING FROM ACCOUNT:"+AccNumber);
         return 0;
 }
-    public int deposit(CheckDetails CDetails,int index,BankAccount1 obj[]){
+
+
+    public int deposit(CheckDetails CDetails,int index,BankAccount1 obj[]) throws PasswordNotMatchException{
         if(!CDetails.WrgAccount.contains(AccNumber)){
             int k;
             for(k=0;k<3;k++){
@@ -99,8 +135,13 @@ public class BankAccount1
                 return 1;
                 }
                 else if(!checkIf(pass,index,obj)&&k!=2){   
-                        System.out.println("WRONG PASSWORD");
-                        System.out.println("YOU HAVE "+(3-k-1)+" MORE ATTEMPTS");
+                        //THROWS WHEN PASSWORD DOESN'T MATCHES
+                try{ 
+                throw  new PasswordNotMatchException("WRONG PASSWORD\nYOU HAVE "+(3-k-1)+" MORE ATTEMPTS");
+                
+            }catch(PasswordNotMatchException K){
+                System.out.println(K.getMessage());
+            }
                 }
             }
         }
@@ -110,7 +151,7 @@ public class BankAccount1
 }
     
     
-    public int checkbalance(CheckDetails CDetails,int index,BankAccount1 obj[]){
+    public int checkbalance(CheckDetails CDetails,int index,BankAccount1 obj[]) throws PasswordNotMatchException{
         if(!CDetails.WrgAccount.contains(AccNumber)){
             int k;
             for(k=0;k<3;k++){
@@ -123,8 +164,13 @@ public class BankAccount1
                     return 1;
                 }
                 else if(!checkIf(pass,index,obj)&&k!=2){   
-                        System.out.println("WRONG PASSWORD");
-                        System.out.println("YOU HAVE "+(3-k-1)+" MORE ATTEMPTS");
+                //THROWS WHEN PASSWORD DOESN'T MATCHES
+                try{ 
+                throw  new PasswordNotMatchException("WRONG PASSWORD\nYOU HAVE "+(3-k-1)+" MORE ATTEMPTS");
+                
+            }catch(PasswordNotMatchException S){
+                System.out.println(S.getMessage());
+            }
                 }
             }
         }
@@ -134,7 +180,7 @@ public class BankAccount1
 }
     
     
-	public static void main(String[] args) {
+	public static void main(String[] args) throws AlreadyAccountExistsException,AccountNotFoundException,ChoiceNotCorrectException {
        //ArrayList<String> array_lst = new ArrayList<String>();
         CheckDetails CDetails=new CheckDetails();
 	    Scanner inp=new Scanner(System.in);
@@ -148,10 +194,21 @@ public class BankAccount1
             String Name=inp.nextLine();
             System.out.print("Account Number:");
             String ANumber=inp.nextLine();
-            while(i !=0  &&  CDetails.ATaken.contains(ANumber)){
-                System.out.print("THIS ACCOUNT NUMBER IS ALREADY TAKEN\nPLEASE ENTER THE NEW ONE:");
-                ANumber=inp.nextLine();
+            boolean flag=true;
+            while(flag){
+                //THROWS EXCEPTION IF ALREADY TAKEN
+            try{
+            if(i !=0  &&  CDetails.ATaken.contains(ANumber)){
+                throw new AlreadyAccountExistsException("THIS ACCOUNT NUMBER IS ALREADY TAKEN\nPLEASE ENTER THE NEW ONE:"); 
             }
+            else{
+                flag=false;
+            }
+        }catch(AlreadyAccountExistsException E){
+            System.out.print(E.getMessage()); 
+            ANumber=inp.nextLine();
+        }
+    }
             System.out.print("Password:");
             String pass=inp.nextLine();
             System.out.print("Amount being deposited at first :");
@@ -179,35 +236,62 @@ public class BankAccount1
                         break;
                     }
             		if(n==1){
+                        try{
             		        int bb=obj[i].deposit(CDetails,i,obj);
                     	    if (bb==0)
                     	        break;
-                            }
+                            }catch(Exception A){
+                            System.out.println(A);
+                        }
+                        }
                     else if(n==2){
+                            try{
                     	    int aa=obj[i].withdraw(CDetails,i,obj);
                     	    if (aa==0)
                     	        break;
+                        }catch(Exception B){
+                            System.out.println(B);
                         }
+                    }
                     else if(n==3){
+                        try{
                     	    int cc=obj[i].checkbalance(CDetails,i,obj);
                     	    if (cc==0)
                     	        break;
+                        }catch(Exception C){
+                            System.out.println(C);
                         }
+                    }
                     else{
-                    	System.out.print("ENTER THE CORRECT ONE:");
-            		        }
+                        try{
+                            //THROWS WHEN ENTERED INPUT IS WRONG
+                    	    throw new ChoiceNotCorrectException("ENTER THE CORRECT ONE");
+            		    }catch(ChoiceNotCorrectException s){
+                            System.out.println("Error:"+s.getMessage());
                         }
                     }
                 }
+            }
+        }
                 if(flag==0){
-                    System.out.println("THE ACCOUNT NUMBER WHICH YOU HAVE ENTERED TO SEARCH IS NOT FOUND");
+                    // THROWS WHEN ACCOUNT NOT THERE
+                    try{
+                    throw new AccountNotFoundException("THE ACCOUNT NUMBER WHICH YOU HAVE ENTERED TO SEARCH IS NOT FOUND");
+                }catch(AccountNotFoundException e){
+                    System.out.println("Error:"+e.getMessage());
                 }
+            }
             } 
             else if(chk==-2){
                 break;
             }
             else{
-                System.out.println("ENTER THE CORRECT NUMBER");
+                //THROWS WHEN ENTERED INPUT IS WRONG
+                try{
+                    	    throw new ChoiceNotCorrectException("ENTER THE CORRECT NUMBER");
+            		    }catch(ChoiceNotCorrectException s){
+                            System.out.println("Error:"+s.getMessage());
+                        }
             }
         }
 	}

@@ -416,7 +416,7 @@ public class BankAccountApplication
         while(true){
         System.out.println("\nEnter 1 to Add Account Details");
         System.out.println("Enter 2 to Get Account Details");
-	    System.out.println("Enter 3 to Display Account Details");
+	System.out.println("Enter 3 to Display Account Details");
         System.out.println("Enter 4 to Deposit");
         System.out.println("Enter 5 to Withdraw");
         System.out.println("Enter 6 for Balance Enquiry");
@@ -455,5 +455,5 @@ public class BankAccountApplication
                 }
             }
         }
-	}
+     }
  }

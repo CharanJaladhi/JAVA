@@ -34,6 +34,7 @@ class PasswordNotMatchException extends Exception{
     }
 }
 
+
 //THIS CLASS IS USED TO CHECK PASSWORDS
 class CheckDetails{
     ArrayList<String> WrgAccount;
@@ -109,14 +110,22 @@ public class BankAccountApplication
                 System.out.print(E.getMessage()); 
                 ANumber=scanner.next();
             }
-    }
-            System.out.print("Enter Password:");
-            String pass=scanner.next();
+        }   
+        System.out.print("Enter Password:");
+        String pass=scanner.next();
+        double bal;
+        while (true) {
             System.out.print("Enter Amount being deposited at first :");
-            double bal=scanner.nextFloat();
-            object=new BankAccountApplication(UName,bal,pass);
-            AccountDetails.put(ANumber,object);
-            System.out.println("Account Details Added Successfully");
+            try {
+                bal = Double.parseDouble(scanner.next());
+                break; // will only get to here if input was a double
+            } catch (NumberFormatException ignore) {
+                System.out.println("Invalid input\nONLY NUMERALS ARE ALLOWED");
+            }
+        }
+        object=new BankAccountApplication(UName,bal,pass);
+        AccountDetails.put(ANumber,object);
+        System.out.println("Account Details Added Successfully");
         }
     }
 
@@ -127,8 +136,13 @@ public class BankAccountApplication
         System.out.print("Enter Password:");
         String MPassword=scanner.next();
         if(manager.checkIfManagerDetailsMatches(MName,MPassword)){
-            for(String key:AccountDetails.keySet()){
-                System.out.println("\nAccount Number:"+key+"\nUser Name:"+AccountDetails.get(key).AccHolderName+"\nBalance:"+AccountDetails.get(key).balance);
+            if(AccountDetails.isEmpty()){
+                System.out.println("There are no Account Details present in database.");
+            }
+            else if(!AccountDetails.isEmpty()){
+                for(String key:AccountDetails.keySet()){
+                    System.out.println("\nAccount Number:"+key+"\nUser Name:"+AccountDetails.get(key).AccHolderName+"\nBalance:"+AccountDetails.get(key).balance);
+                }
             }
         }
     }
@@ -190,8 +204,16 @@ public class BankAccountApplication
                 System.out.print("Enter password to access the "+CheckAccNumber+" :");
                 String CheckPassword=scanner.next();
                 if(CheckPassword.equals(AccountDetails.get(CheckAccNumber).password)){
-                    System.out.print("Enter the amount to be deposited:");
-                    double NewDepositAmount=scanner.nextFloat();
+                    double NewDepositAmount;
+                    while (true) {
+                        System.out.print("Enter the amount to be deposited:");
+                        try {
+                            NewDepositAmount = Double.parseDouble(scanner.next());
+                            break; // will only get to here if input was a double
+                        } catch (NumberFormatException ignore) {
+                            System.out.println("Invalid input\nONLY NUMERALS ARE ALLOWED");
+                        }
+                    }
                     if(NewDepositAmount<0)
                         System.out.println("Enter the positive number");
                     else{
@@ -239,8 +261,16 @@ public class BankAccountApplication
             System.out.print("Enter password to access the "+CheckAccNumber+":");
             String CheckPassword=scanner.next();
             if(CheckPassword.equals(AccountDetails.get(CheckAccNumber).password)){
-                System.out.print("Enter the amount to be withdrawn:");
-                double NewWithdrawAmount=scanner.nextFloat();
+                double NewWithdrawAmount;
+                while (true) {
+                        System.out.print("Enter the amount to be withdrawn:");
+                        try {
+                            NewWithdrawAmount = Double.parseDouble(scanner.next());
+                            break; // will only get to here if input was a double
+                        } catch (NumberFormatException ignore) {
+                            System.out.println("Invalid input\nONLY NUMERALS ARE ALLOWED");
+                        }
+                    }
                 if(NewWithdrawAmount<0)
                     System.out.println("Enter the positive number");
                 else if(NewWithdrawAmount>AccountDetails.get(CheckAccNumber).balance)
@@ -416,7 +446,7 @@ public class BankAccountApplication
         while(true){
         System.out.println("\nEnter 1 to Add Account Details");
         System.out.println("Enter 2 to Get Account Details");
-	    System.out.println("Enter 3 to Display Account Details");
+	System.out.println("Enter 3 to Display Account Details");
         System.out.println("Enter 4 to Deposit");
         System.out.println("Enter 5 to Withdraw");
         System.out.println("Enter 6 for Balance Enquiry");
